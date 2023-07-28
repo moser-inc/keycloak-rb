@@ -39,16 +39,12 @@ module Keycloak
       decoded&.first
     end
 
-    def get(uri, params = {})
-      uri = build_uri(uri) unless uri.start_with?('https://')
+    [:get, :post, :put].each do |method|
+      define_method method do |uri, params = {}|
+        uri = build_uri(uri) unless uri.start_with?('https://')
 
-      http_client.get(uri, params, access_token)
-    end
-
-    def post(uri, body = {})
-      uri = build_uri(uri) unless uri.start_with?('https://')
-
-      http_client.post(uri, body, access_token)
+        http_client.send(method, uri, params, access_token)
+      end
     end
 
     private
@@ -56,13 +52,13 @@ module Keycloak
     def access_token
       raise ClientSecretError if client.blank? || secret.blank?
 
-      json = http_client.post_form(config['token_endpoint'], {
+      @access_token ||= http_client.post_form(config['token_endpoint'], {
         grant_type: 'client_credentials',
         client_id: client,
         client_secret: secret
-      })
+      })['access_token']
 
-      json['access_token']
+      @access_token
     end
 
     def build_uri(endpoint)
