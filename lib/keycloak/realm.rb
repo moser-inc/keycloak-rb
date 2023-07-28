@@ -20,13 +20,14 @@ module Keycloak
 
     def config
       @config ||= http_client.get(
-        "https://#{host}/realms/#{realm}/.well-known/openid-configuration"
+        "https://#{host}/realms/#{realm}/.well-known/openid-configuration",
+        expires_in: 3600
       )
       @config
     end
 
     def jwks_certificates
-      @jwks_certificates ||= http_client.get(config['jwks_uri'])
+      @jwks_certificates ||= http_client.get(config['jwks_uri'], expires_in: 3600)
       @jwks_certificates
     end
 

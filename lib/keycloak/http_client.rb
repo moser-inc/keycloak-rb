@@ -1,11 +1,17 @@
 module Keycloak
   class HttpClient
 
-    def get(uri, params = {}, access_token = nil)
+    def get(uri, params = {}, access_token = nil, expires_in: nil)
       uri = URI.parse(uri)
       uri.query = URI.encode_www_form(params) if params.any?
 
-      request(:get, uri, access_token)
+      if expires_in && defined?(Rails)
+        Rails.cache.fetch("keycloak-http-#{uri}", expires_in:) do
+          request(:get, uri, access_token)
+        end
+      else
+        request(:get, uri, access_token)
+      end
     end
 
     def post(uri, body = {}, access_token = nil)
@@ -45,6 +51,8 @@ module Keycloak
       yield(request) if block_given?
 
       response = build_http(uri).request(request)
+      Keycloak.logger.info "HTTP #{verb.upcase} #{uri} #{response.code}: #{response.message}"
+
       handle_response(response)
     end
 

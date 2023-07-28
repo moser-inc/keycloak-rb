@@ -4,6 +4,8 @@ module Keycloak
   require_relative 'keycloak/version'
 
   class << self
-    attr_accessor :realm, :host, :client, :secret
+    attr_accessor :realm, :host, :client, :secret, :logger
   end
+
+  @logger = Logger.new($stdout)
 end
