@@ -5,7 +5,7 @@ module Keycloak
       @realm = realm
     end
 
-    def search_users(params = nil)
+    def search_users(params = {})
       @realm.get('users', params)
     end
 
