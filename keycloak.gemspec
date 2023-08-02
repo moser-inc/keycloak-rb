@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.authors = ['Greg Woods']
   spec.email = ['greg.woods@moserit.com']
   spec.summary = 'Library for exchanging access tokens with keycloak'
-  spec.homepage = 'https://bitbucket.org/moser-inc/keycloak-rb'
+  spec.homepage = 'https://github.com/moser-inc/keycloak-rb'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.1'
   spec.files = Dir['{lib}/**/*', 'LICENSE.txt', 'Rakefile', 'README.md']

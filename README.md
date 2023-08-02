@@ -5,7 +5,7 @@ Use this gem to communicate with a Keycloak server from your ruby or rails appli
 ## Configuration
 
 ```
-Keycloak.host = 'auth.yourhost.com'
+Keycloak.host = 'https://auth.yourhost.com'
 Keycloak.realm = 'Your Realm Name'
 Keycloak.client = 'service client id'
 Keycloak.secret = 'service client secret' # Optional
