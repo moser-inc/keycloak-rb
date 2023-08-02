@@ -53,6 +53,7 @@ module Keycloak
     private
 
     def request(verb, uri, access_token)
+      start_time = current_time_in_ms
       request = Object.const_get("Net::HTTP::#{verb.capitalize}").new(uri.request_uri)
       request['Accept'] = 'application/json'
       request['Authorization'] = "Bearer #{access_token}" if access_token
@@ -60,7 +61,8 @@ module Keycloak
       yield(request) if block_given?
 
       response = @http.request(request)
-      Keycloak.logger.info "HTTP #{verb.upcase} #{uri} #{response.code}: #{response.message}"
+      elapsed = current_time_in_ms - start_time
+      Keycloak.logger.info "HTTP #{verb.upcase} #{uri} #{response.code} (#{elapsed}ms): #{response.message}"
 
       handle_response(response)
     end
@@ -76,6 +78,10 @@ module Keycloak
       else
         raise HttpResponseError, response.message
       end
+    end
+
+    def current_time_in_ms
+      DateTime.now.strftime("%Q").to_i
     end
 
   end

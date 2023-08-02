@@ -23,6 +23,9 @@ access_token = request.headers['Authorization']&.split('Bearer ')&.last
 realm = Keycloak::Realm.new
 realm.decode(access_token)
 # >> { "exp" => 1690568249, "sub" => ... }
+
+# refresh a token
+realm.refresh(refresh_token)
 ```
 
 ## Calling the REST API
