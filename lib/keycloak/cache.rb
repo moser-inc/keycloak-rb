@@ -1,11 +1,9 @@
 module Keycloak
   module Cache
 
-    def cached(*args, **kwargs)
+    def cached(...)
       if defined?(Rails)
-        Rails.cache.fetch(*args, **kwargs) do
-          yield
-        end
+        Rails.cache.fetch(...)
       else
         yield
       end

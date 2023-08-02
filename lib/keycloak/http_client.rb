@@ -81,7 +81,7 @@ module Keycloak
     end
 
     def current_time_in_ms
-      DateTime.now.strftime("%Q").to_i
+      DateTime.now.strftime('%Q').to_i
     end
 
   end
