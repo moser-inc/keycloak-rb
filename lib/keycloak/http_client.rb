@@ -1,6 +1,5 @@
 module Keycloak
   class HttpClient
-    include Cache
 
     def initialize(host)
       uri = URI.parse(host)
@@ -15,7 +14,7 @@ module Keycloak
       uri.query = URI.encode_www_form(params) if params.any?
 
       if expires_in
-        cached("keycloak-http-#{uri}", expires_in:, race_condition_ttl: 5) do
+        Keycloak.cache.fetch("keycloak-http-#{uri}", expires_in:, race_condition_ttl: 5) do
           request(:get, uri, access_token)
         end
       else

@@ -6,13 +6,11 @@ module Keycloak
   end
 
   module ServiceUser
-    include Cache
-
     def service_user_token
       raise 'This method requires a client secret' unless client_secret
 
       if @service_user_token.nil? || @service_user_token.expired?
-        @service_user_token = cached("keycloak-service-user-#{client_id}", expires_in: 290) do
+        @service_user_token = Keycloak.cache.fetch("keycloak-service-user-#{client_id}", expires_in: 290) do
           fetch_service_user_token
         end
       end

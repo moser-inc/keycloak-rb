@@ -1,6 +1,5 @@
 require 'net/http'
 require 'jwt'
-require_relative 'cache'
 require_relative 'error'
 require_relative 'http_client'
 require_relative 'service_user'

@@ -1,13 +1,14 @@
 module Keycloak
-  module Cache
 
-    def cached(...)
-      if defined?(Rails)
-        Rails.cache.fetch(...)
-      else
-        yield
-      end
+  class NullCache
+    def fetch(...)
+      yield
     end
+  end
 
+  class RailsCache
+    def fetch(...)
+      Rails.cache.fetch(...)
+    end
   end
 end
