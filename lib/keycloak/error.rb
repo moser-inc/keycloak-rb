@@ -3,9 +3,5 @@ module Keycloak
 
   class HttpResponseError < KeycloakError; end
 
-  class ClientSecretError < KeycloakError
-    def initialize
-      super 'This action requires a Keycloak client ID and secret be configured'
-    end
-  end
+  class HttpNotFoundError < KeycloakError; end
 end

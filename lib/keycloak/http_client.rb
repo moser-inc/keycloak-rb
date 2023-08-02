@@ -1,12 +1,21 @@
 module Keycloak
   class HttpClient
+    include Cache
 
-    def get(uri, params = {}, access_token = nil, expires_in: nil)
+    def initialize(host)
+      uri = URI.parse(host)
+
+      @http = Net::HTTP.new(uri.host, uri.port)
+      @http.use_ssl = uri.scheme == 'https'
+      @http.verify_mode = OpenSSL::SSL::VERIFY_NONE if host == 'host.docker.internal'
+    end
+
+    def get(uri, params = {}, access_token: nil, expires_in: nil)
       uri = URI.parse(uri)
       uri.query = URI.encode_www_form(params) if params.any?
 
-      if expires_in && defined?(Rails)
-        Rails.cache.fetch("keycloak-http-#{uri}", expires_in:) do
+      if expires_in
+        cached("keycloak-http-#{uri}", expires_in:, race_condition_ttl: 5) do
           request(:get, uri, access_token)
         end
       else
@@ -14,7 +23,7 @@ module Keycloak
       end
     end
 
-    def post(uri, body = {}, access_token = nil)
+    def post(uri, body = {}, access_token: nil)
       uri = URI.parse(uri)
 
       request(:post, uri, access_token) do |request|
@@ -23,7 +32,7 @@ module Keycloak
       end
     end
 
-    def put(uri, body = {}, access_token = nil)
+    def put(uri, body = {}, access_token: nil)
       uri = URI.parse(uri)
 
       request(:put, uri, access_token) do |request|
@@ -32,7 +41,7 @@ module Keycloak
       end
     end
 
-    def post_form(uri, params, access_token = nil)
+    def post_form(uri, params, access_token: nil)
       uri = URI.parse(uri)
 
       request(:post, uri, access_token) do |request|
@@ -50,17 +59,10 @@ module Keycloak
 
       yield(request) if block_given?
 
-      response = build_http(uri).request(request)
+      response = @http.request(request)
       Keycloak.logger.info "HTTP #{verb.upcase} #{uri} #{response.code}: #{response.message}"
 
       handle_response(response)
-    end
-
-    def build_http(uri)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE if uri.host == 'host.docker.internal'
-      http
     end
 
     def handle_response(response)
@@ -69,6 +71,8 @@ module Keycloak
         JSON.parse(response.body)
       when Net::HTTPNoContent
         nil
+      when Net::HTTPNotFound
+        raise HttpNotFoundError, response.message
       else
         raise HttpResponseError, response.message
       end

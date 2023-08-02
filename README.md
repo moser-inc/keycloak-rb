@@ -8,7 +8,7 @@ Use this gem to communicate with a Keycloak server from your ruby or rails appli
 Keycloak.host = 'auth.yourhost.com'
 Keycloak.realm = 'Your Realm Name'
 Keycloak.client = 'service client id'
-Keycloak.secret = 'service client secret'
+Keycloak.secret = 'service client secret' # Optional
 ```
 
 ## Decoding Tokens
@@ -30,7 +30,7 @@ realm.decode(access_token)
 More advanced applications may want to interface with the Keycloak admin [REST API](https://www.keycloak.org/docs-api/18.0/rest-api/). In order to use this you will need to configure a working service client and secret.
 
 ```
-api = Keycloak::Api.new
-api.get_user('user id here')
+realm = Keycloak::Realm.new
+realm.get("users/#{user_id}")
 # >> { user info here }
 ```
