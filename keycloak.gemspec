@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.1'
   spec.files = Dir['{lib}/**/*', 'LICENSE.txt', 'Rakefile', 'README.md']
-  spec.add_dependency 'jwt'
+  spec.add_dependency 'jwt', '>= 2.0'
   spec.require_paths = ['lib']
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
