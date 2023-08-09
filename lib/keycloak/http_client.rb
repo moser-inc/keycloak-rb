@@ -70,12 +70,14 @@ module Keycloak
       case response
       when Net::HTTPOK
         JSON.parse(response.body)
+      when Net::HTTPCreated
+        response.header['location']
       when Net::HTTPNoContent
         nil
       when Net::HTTPNotFound
-        raise HttpNotFoundError, response.message
+        raise HttpNotFoundError.new(response)
       else
-        raise HttpResponseError, response.message
+        raise HttpResponseError.new(response)
       end
     end
 
