@@ -75,9 +75,9 @@ module Keycloak
       when Net::HTTPNoContent
         nil
       when Net::HTTPNotFound
-        raise HttpNotFoundError.new(response)
+        raise HttpNotFoundError, response
       else
-        raise HttpResponseError.new(response)
+        raise HttpResponseError, response
       end
     end
 
