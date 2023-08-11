@@ -2,6 +2,14 @@
 
 Use this gem to communicate with a Keycloak server from your ruby or rails application.
 
+## Installation
+
+Add keycloak to your gemfile and run `bundle install`.
+
+```
+gem 'keycloak', git: 'https://github.com/moser-inc/keycloak-rb.git'
+```
+
 ## Configuration
 
 ```
