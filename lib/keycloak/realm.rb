@@ -41,7 +41,7 @@ module Keycloak
     end
 
     def decode(token)
-      decoded = JWT.decode(token, nil, true, { algorithms: ['RS256'], jwks: lambda do |options|
+      decoded = JWT.decode(token, nil, true, { algorithms: ['RS256'], jwks: lambda do |_options|
         { keys: jwks_certificates['keys'] }
       end })
 
