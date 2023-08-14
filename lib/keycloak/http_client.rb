@@ -9,17 +9,11 @@ module Keycloak
       @http.verify_mode = OpenSSL::SSL::VERIFY_NONE if host == 'host.docker.internal'
     end
 
-    def get(uri, params = {}, access_token: nil, expires_in: nil)
+    def get(uri, params = {}, access_token: nil)
       uri = URI.parse(uri)
       uri.query = URI.encode_www_form(params) if params.any?
 
-      if expires_in
-        Keycloak.cache.fetch("keycloak-http-#{uri}", expires_in:, race_condition_ttl: 5) do
-          request(:get, uri, access_token)
-        end
-      else
-        request(:get, uri, access_token)
-      end
+      request(:get, uri, access_token)
     end
 
     def post(uri, body = {}, access_token: nil)

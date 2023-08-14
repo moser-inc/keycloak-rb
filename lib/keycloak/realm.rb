@@ -25,22 +25,24 @@ module Keycloak
     end
 
     def config
-      @config ||= http_client.get(
-        "#{host}/realms/#{realm}/.well-known/openid-configuration",
-        expires_in: 3600
-      )
+      @config ||= Keycloak.cache.fetch("kc-#{realm}-#{client_id}-config") do
+        http_client.get("#{host}/realms/#{realm}/.well-known/openid-configuration")
+      end
+
       @config
     end
 
     def jwks_certificates
-      @jwks_certificates ||= http_client.get(config['jwks_uri'], expires_in: 3600)
+      @jwks_certificates ||= Keycloak.cache.fetch("kc-#{realm}-#{client_id}-jwks") do
+        http_client.get(config['jwks_uri'])
+      end
+
       @jwks_certificates
     end
 
     def decode(token)
       decoded = JWT.decode(token, nil, true, { algorithms: ['RS256'], jwks: lambda do |options|
-        @cached_keys = nil if options[:invalidate]
-        @cached_keys ||= { keys: jwks_certificates['keys'] }
+        { keys: jwks_certificates['keys'] }
       end })
 
       decoded&.first
