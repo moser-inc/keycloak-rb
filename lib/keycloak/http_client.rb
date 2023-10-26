@@ -34,6 +34,15 @@ module Keycloak
       end
     end
 
+    def delete(uri, body = {}, access_token: nil)
+      uri = URI.parse(uri)
+
+      request(:delete, uri, access_token) do |request|
+        request.body = body.to_json
+        request['Content-Type'] = 'application/json'
+      end
+    end
+
     def post_form(uri, params, access_token: nil)
       uri = URI.parse(uri)
 

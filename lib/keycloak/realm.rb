@@ -56,7 +56,7 @@ module Keycloak
       })
     end
 
-    [:get, :post, :put].each do |method|
+    [:get, :post, :put, :delete].each do |method|
       define_method method do |endpoint, *args, **kwargs|
         kwargs[:access_token] = service_user_token
         http_client.send(method, "#{host}/admin/realms/#{realm}/#{endpoint}", *args, **kwargs)
