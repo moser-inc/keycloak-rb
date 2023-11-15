@@ -6,7 +6,7 @@ module Keycloak
 
       @http = Net::HTTP.new(uri.host, uri.port)
       @http.use_ssl = uri.scheme == 'https'
-      @http.verify_mode = OpenSSL::SSL::VERIFY_NONE if host == 'host.docker.internal'
+      @http.verify_mode = OpenSSL::SSL::VERIFY_NONE if host.match?('host.docker.internal')
     end
 
     def get(uri, params = {}, access_token: nil)
